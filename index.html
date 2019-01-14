@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Giphy App</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" type="text/css" media="screen" href="main.css" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+</head>
+<body>
+    <div id="buttons"></div>
+
+    <form id="add-button">
+        <label>Search for something else?</label>
+        <input type="text" id="manual-input">
+        <input type="submit" id="submit" value="Submit">
+    </form>
+
+    <div id="gifs"></div>
+</body>
+
+
+<script>
+
+$(document).ready(function() {
+    // original array
+    var topics = ["Pulp Fiction", "Clint Eastwood", "Dank Memes", "Post Malone", "Idiot", "Yes", "No"];
+
+    // render buttons to the page
+    function renderButtons() {
+        $("#buttons").empty();
+
+        // loop thru array of topics and make buttons
+        for (var i=0; i < topics.length; i++) {
+            var a = $("<button>");
+            // give classes to each button to reference later
+            a.addClass("topic");
+            a.attr("data-name", topics[i]);
+            a.text(topics[i]);
+            $("#buttons").append(a);
+        }
+    };
+
+    renderButtons();
+
+    // when submit button is clicked we add it to the button list
+    $("#submit").on("click", function(event) {
+        event.preventDefault();
+        // grabbing text from the user input
+        var topic = $("#manual-input").val().trim();
+        // push it to the array and re-render the entire array
+        topics.push(topic);
+        renderButtons();
+
+
+    });
+
+    // every time we click on a .topic class we append the data from the API to the page
+    $(".topic").on("click", function() {
+        // clear prior gifs
+        $("#gifs").empty();
+        // ajax request
+        var query = $(this).attr("data-name");
+        var queryURL = "https://api.giphy.com/v1/gifs/search?q=" +
+        query + "&api_key=dc6zaTOxFJmzC&limit=10";
+
+        $.ajax({
+            url: queryURL,
+            method: "GET"
+        })
+        .done(function(response) {
+            var results = response.data;
+            // loop thru the response and append it to the page
+            for (var i=0; i < results.length; i++) {
+                var gifDiv = $("<div>");
+                var rating = results[i].rating;
+                var p = $("<p>").text("Rated: " + rating);
+                var image = $("<img>");
+                // give the image attributes we can reference later
+                image.attr("src", results[i].images.fixed_height.url);
+                
+                gifDiv.prepend(p);
+                gifDiv.prepend(image);
+
+                $("#gifs").prepend(gifDiv);
+
+            }
+        });
+    });
+});
+
+
+</script>
+</html>
