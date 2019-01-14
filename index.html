@@ -40,7 +40,7 @@ $(document).ready(function() {
             a.text(topics[i]);
             $("#buttons").append(a);
         }
-    };
+    }
 
     renderButtons();
 
@@ -71,6 +71,7 @@ $(document).ready(function() {
         })
         .done(function(response) {
             var results = response.data;
+            console.log(results);
             // loop thru the response and append it to the page
             for (var i=0; i < results.length; i++) {
                 var gifDiv = $("<div>");
@@ -84,6 +85,7 @@ $(document).ready(function() {
                 gifDiv.prepend(image);
 
                 $("#gifs").prepend(gifDiv);
+                
 
             }
         });
